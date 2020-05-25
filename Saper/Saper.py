@@ -42,7 +42,7 @@ class MyGui():
             self.__plansza_m=sy
             self.__plansza_mina=smina
 
-            print(self.__plansza_n, self.__plansza_m, self.__plansza_mina)
+            #print(self.__plansza_n, self.__plansza_m, self.__plansza_mina)
             #plansza
 
             self.__text.set("Start!")
@@ -71,24 +71,7 @@ class MyGui():
         entry3.grid(row=2, column=1)
         button1.grid(row=3, column=0)
         button2.grid(row=3, column=1)
-        label3.grid(row=4, column=0)
-
-class Test():
-    def __init__(self):
-        self.root = tk.Tk()
-        self.text = tk.StringVar()
-        self.text.set("Test")
-        self.label = tk.Label(self.root, textvariable=self.text)
-
-        self.button = tk.Button(self.root,
-                                text="Click to change text below",
-                                 command=self.changeText)
-        self.button.pack()
-        self.label.pack()
-        self.root.mainloop()
-
-    def changeText(self):
-        self.text.set("Text updated")        
+        label3.grid(row=4, column=0)       
 
 def main():
 
