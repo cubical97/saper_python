@@ -16,6 +16,21 @@ class MyGui():
     def __str__(self):
         return 'MyGui'
 
+    def PlayZone(self):
+        if self.__play:
+            for i in self.__play:
+                i.destroy()
+            self.__play.clear() 
+        self.__play=[]
+        __COLUMN_SET=5
+        p=0
+        for i in range(0, self.__plansza_m):
+            for j in range(0, self.__plansza_n):
+                self.__play.append(tk.Button(self.__okno, text = ' ', bg='light yellow', height=1 , width=2))
+                self.__play[p].grid(row=i, column = j+__COLUMN_SET)
+                p += 1
+        pass
+
     def StartTry(self, sx=8, sy=8, smina=12):
         try:
             sn=int(sx)
@@ -29,7 +44,7 @@ class MyGui():
                 self.__text.set('Wpisz wartość rozmiaru od 2 do 15')
                 return
             if(smi<1 or smi>sm*sn-1):
-                self.__text.set('Wpisz wartość min od 1 do ' +  str(sn*sm))
+                self.__text.set(f'Wpisz wartość min od 1 do {sn*sm-1}')
                 return
         except ValueError as e:
             self.__text.set('Wpisz liczby!')
@@ -38,13 +53,12 @@ class MyGui():
             print(e.args)
             raise
         else:
-            self.__plansza_n=sx
-            self.__plansza_m=sy
-            self.__plansza_mina=smina
+            self.__plansza_n=int(sx)
+            self.__plansza_m=int(sy)
+            self.__plansza_mina=int(smina)
 
-            #print(self.__plansza_n, self.__plansza_m, self.__plansza_mina)
             #plansza
-
+            self.PlayZone()
             self.__text.set("Start!")
         pass
 
@@ -77,12 +91,11 @@ def main():
 
     okno=tk.Tk()
     gui=MyGui(okno)
-    gui.Menu()
 
+    gui.Menu()
 
     okno.mainloop()
 
-    #Test()######
 
 if __name__ == '__main__':
     main()
