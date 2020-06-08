@@ -65,7 +65,7 @@ class Tile():
                 play_pack._points_left_real += 1
         if not play_pack._points_left_real or not play_pack._points_left_not:
             if int(play_pack._points_left.get()) == play_pack._points_left_real:
-                play_pack._text.set('Udało się!') #STOP :>
+                play_pack._text.set('Udało się!') #STOP
                 if not play_pack._stop:
                     play_pack._stop = True
                     for row in play_pack._play_zone:
@@ -83,7 +83,7 @@ class Tile():
                 play_pack._play_zone[a][b].set_visible()
                 if play_pack._play_zone[a][b]._wartosc or play_pack._play_zone[a][b]._mina: # sprawdzenie czy mina
                     if play_pack._play_zone[a][b]._mina:
-                        play_pack._text.set('Przegrana!')#STOP :<
+                        play_pack._text.set('Przegrana!') #STOP
                         for row in play_pack._play_zone:
                             for column_element in row:
                                 column_element.set_visible()
@@ -101,7 +101,7 @@ class Tile():
                     self.check_tile(a+1, b+1, play_pack)
         if ((not play_pack._points_left_real) or (not play_pack._points_left_not)):
             if (int(play_pack._points_left.get()) == play_pack._points_left_real):
-                play_pack._text.set('Udało się!')#STOP :>
+                play_pack._text.set('Udało się!') #STOP
                 if not play_pack._stop:
                     play_pack._stop = True
                     for row in play_pack._play_zone:
@@ -125,9 +125,9 @@ class PlayZone():
         self._points_left_real = 0      #pozostałe miny do oznaczenia, dla flagi, ukryte
         self._points_left_not = 0       #pozostałe miny do oznaczenia, dla wykopane, ukryte
         self._text = text
-        self.__column_start = column      # - miejsce rozpoczęcia rysowania planszy
-        self._play_zone = None            # - przechowuje pola planszy
-        self._stop = False                # - zapobiega przycinaniu dla Tile.check_tile(...)
+        self.__column_start = column # - miejsce rozpoczęcia rysowania planszy
+        self._play_zone = None       # - przechowuje pola planszy
+        self._stop = False           # - zapobiega przycinaniu dla Tile.check_tile(...)
 
     def remove_play_zone(self):
         """Usuwa dane planszy."""
@@ -165,14 +165,14 @@ class PlayZone():
             j=0
             for j in range(0, self.__plansza_columns):
                 otocznie = 0
-                otocznie += if_mine( i-1, j-1)
-                otocznie += if_mine( i-1, j  )
-                otocznie += if_mine( i-1, j+1)
-                otocznie += if_mine( i  , j-1)
-                otocznie += if_mine( i  , j+1)
-                otocznie += if_mine( i+1, j-1)
-                otocznie += if_mine( i+1, j  )
-                otocznie += if_mine( i+1, j+1)
+                otocznie += if_mine(i-1, j-1)
+                otocznie += if_mine(i-1, j  )
+                otocznie += if_mine(i-1, j+1)
+                otocznie += if_mine(i  , j-1)
+                otocznie += if_mine(i  , j+1)
+                otocznie += if_mine(i+1, j-1)
+                otocznie += if_mine(i+1, j  )
+                otocznie += if_mine(i+1, j+1)
                 self._play_zone[i][j]._wartosc = otocznie
 
     def set_play_zone(self, n, m, miny):
@@ -222,7 +222,7 @@ class MyGui():
         self.__play.set_play_zone(self.__plansza_columns, self.__plansza_rows, self.__plansza_mina)
         self.__points_left.set(self.__plansza_mina)
 
-    def start_try(self, sx, sy, smina): #def start_try(self, sx=8, sy=8, smina=12):
+    def start_try(self, sx, sy, smina):
         """Sprawdza poprawność wprowadzonych danych"""
         MAX_ROWS = 15
         MAX_COLUMNS = 20
@@ -262,7 +262,7 @@ class MyGui():
         if self.__play:
             self.__play.cheat1()
 
-    def menu(self): ##główne okno
+    def menu(self):
         """Tworzy interfejs.
 
         Tworzy pola komunikatów, wprowadzania danych i przyciski, następnie ustawia je w oknie.
