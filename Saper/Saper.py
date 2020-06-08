@@ -4,8 +4,8 @@ from time import time_ns
 
 TILE_COLOR=('AntiqueWhite1', 'AntiqueWhite2', 'gray85', 'gray80', 'gray65')
 
-######## pole
 class Tile():
+    """Przechowuje dane pola."""
     def __init__(self, play_pack, column, row):
         self.__blockcolor = tk.StringVar()
         self.__blockcolor.set(TILE_COLOR[0])
@@ -19,10 +19,15 @@ class Tile():
         self._flaga=False
         self._wartosc=0
 
-    def set_visible(self, mode=False): #pokazanie wartości pola
+    def set_visible(self, mode=False):
+        """Zmienia widoczność pola.
+
+        Jeśli (not self._mina), pokazuje liczbę sąsiednich min.
+        Jeśli (self._mina), pokazuje minę.
+        """
         if not self._mina:
             if self._wartosc:
-                self.block.configure(text=str(self._wartosc))
+                self.block.configure(text=str(self._wartosc))  
                 self.block.configure(bg=TILE_COLOR[3])
             else:
                 self.block.configure(text='')
@@ -36,7 +41,12 @@ class Tile():
                 self.block.configure(bg=TILE_COLOR[4], fg='red')
         self._visible=True
 
-    def set_flag(self, play_pack): #pokazanie wartości pola
+    def set_flag(self, play_pack):
+        """Ustawienie flagi - aktywowane poprzez kliknięcie.
+
+        Zmienia wartośc licznika oznaczonych pól na planszy.
+        Jeśli (self._mina), zmienia wartość licznika prawidłowo oznaczonych pól na planszy.
+        """
         if not self._visible and not self._flaga:
             self._flaga=True
             self._visible=True
@@ -62,7 +72,12 @@ class Tile():
                         for column_element in row:
                             column_element.set_visible(True)
 
-    def check_tile(self, a, b, play_pack): #działanie po kliknięciu w pole
+    def check_tile(self, a, b, play_pack):
+        """Sprawdzenie pola - aktywowane poprzez kliknięcie.
+
+        Jeśli (not self._mina), sprawdza sąsiednie pola.
+        Zmienia wartość licznika pozostałych pól bez min.
+        """
         if a>=0 and b>=0 and a<len(play_pack._play_zone) and b<len(play_pack._play_zone[0]):
             if not play_pack._play_zone[a][b]._visible:
                 play_pack._play_zone[a][b].set_visible()
@@ -93,13 +108,14 @@ class Tile():
                         for column_element in row:
                             column_element.set_visible(True)
 
-    def cheat2(self): #podejżenie min
+    def cheat2(self):
+        """Zmienia kolor pola w trybie podglądania"""
         if not self._visible:
             if self._mina:
                 self.block.configure(bg=TILE_COLOR[1])
 
-######### plansza
 class PlayZone():
+    """Przechowuje dane planszy."""
     def __init__(self, okno, column, points_left, text):
         self._okno = okno
         self.__plansza_columns = 0
@@ -113,7 +129,8 @@ class PlayZone():
         self._play_zone=None            # - przechowuje pola planszy
         self._stop=False                # - zapobiega przycinaniu dla Tile.check_tile(...)
 
-    def remove_play_zone(self): #usunięcie planszy
+    def remove_play_zone(self):
+        """Usuwa dane planszy."""
         for i in self._play_zone:
             for j in i:
                 j.block.destroy()
@@ -124,12 +141,14 @@ class PlayZone():
         self._points_left.set('')
 
     def cheat1(self):
+        """Aktywuje zmianę koloru wszystkich pól w trybie podglądania"""
         for i in self._play_zone:
             for j in i:
-                j.cheat2() #widzenie min
+                j.cheat2()
 
-    def set_mines(self): #ustawienie min
-        def add_war(i, j):
+    def set_mines(self):
+        """Losowo ustawia miny na planszy"""
+        def if_mine(i, j):
             if i >= 0 and i < self.__plansza_rows and j >= 0 and j < self.__plansza_columns:
                 if self._play_zone[i][j]._mina:
                     return 1
@@ -146,17 +165,18 @@ class PlayZone():
             j=0
             for j in range(0, self.__plansza_columns):
                 otocznie = 0
-                otocznie += add_war( i-1, j -1)
-                otocznie += add_war( i-1, j   )
-                otocznie += add_war( i-1, j +1)
-                otocznie += add_war( i  , j -1)
-                otocznie += add_war( i  , j +1)
-                otocznie += add_war( i+1, j -1)
-                otocznie += add_war( i+1, j   )
-                otocznie += add_war( i+1, j +1)
+                otocznie += if_mine( i-1, j -1)
+                otocznie += if_mine( i-1, j   )
+                otocznie += if_mine( i-1, j +1)
+                otocznie += if_mine( i  , j -1)
+                otocznie += if_mine( i  , j +1)
+                otocznie += if_mine( i+1, j -1)
+                otocznie += if_mine( i+1, j   )
+                otocznie += if_mine( i+1, j +1)
                 self._play_zone[i][j]._wartosc = otocznie
 
-    def set_play_zone(self, n, m, miny): #ustawienie nowej planszy / resetowanie planszy
+    def set_play_zone(self, n, m, miny):
+        """Ustawia nową planszę."""
         if self._play_zone:
             self.remove_play_zone()
         self.__plansza_columns = n
@@ -175,8 +195,13 @@ class PlayZone():
         self.set_mines()
         self._stop=False
 
-######### menu
 class MyGui():
+    """Menu aplikacji.
+    
+    Przechowuje okno wygenerowane w Tkinter.
+    Zawiera pola z wprowaczeniem danych do gry.
+    Zawiera pole komunikatu tekstowego.
+    """
     def __init__(self, okno):
         self.__okno = okno
         self.__okno.title('Saper')
@@ -189,14 +214,16 @@ class MyGui():
         self.__text.set("Wpisz wartości")
         self.__points_left = tk.StringVar()
 
-    def start_play(self): #rozpoczęcie
-        COLUMN_START=5
+    def start_play(self):
+        """Tworzy obiekt planszy dla prawidłowych danych"""
+        COLUMN_START=5 #miejsce rozpoczęcia rysowania planszy
         if not self.__play:
             self.__play=PlayZone(self.__okno, COLUMN_START, self.__points_left, self.__text)
         self.__play.set_play_zone(self.__plansza_columns, self.__plansza_rows, self.__plansza_mina)
         self.__points_left.set(self.__plansza_mina)
 
-    def start_try(self, sx=8, sy=8, smina=12): #sprawdzenie przed rozpoczęciem
+    def start_try(self, sx=8, sy=8, smina=12):
+        """Sprawdza poprawność wprowadzonych danych"""
         MAX_ROWS = 15
         MAX_COLUMNS = 20
         try:
@@ -228,10 +255,18 @@ class MyGui():
             self.__text.set("Start!")
 
     def cheat(self):
+        """Aktywuje tryb podglądania.
+        
+        Oznacza pola z minami.
+        """
         if self.__play:
             self.__play.cheat1()
 
     def menu(self): ##główne okno
+        """Tworzy interfejs.
+
+        Tworzy pola komunikatów, wprowadzania danych i przyciski, następnie ustawia je w oknie.
+        """
         label1 = tk.Label(self.__okno, text = 'rozmiar:')
         label2 = tk.Label(self.__okno, text = 'miny:')
         label3 = tk.Label(self.__okno, textvariable=self.__text)
@@ -259,7 +294,8 @@ class MyGui():
         label5.grid(row=5, column=1, sticky = tk.W) 
         button3.grid(row=7, column=0)
 
-def main(): #start aplikacji
+def main():
+    """Start aplikacji."""
     okno=tk.Tk()
     gui=MyGui(okno)
     gui.menu()
