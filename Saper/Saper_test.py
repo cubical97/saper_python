@@ -20,12 +20,12 @@ class TestSaper(unittest.TestCase):
 
     def test_playzone_start(self):
         def count_mines(play_zone):
-            w = 0
+            count = 0
             for column_in_row in play_zone._play_zone:
                 for element_in_column in column_in_row:
                     if element_in_column._mina:
-                        w += 1
-            return w
+                        count += 1
+            return count
 
         menu_4 = MyGui(tk.Tk())
         menu_4.start_try(5, 5, 3)
