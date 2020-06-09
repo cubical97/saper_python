@@ -6,13 +6,13 @@ TILE_COLOR=('AntiqueWhite1', 'AntiqueWhite2', 'gray85', 'gray80', 'gray65')
 
 class Tile():
     """Przechowuje dane pola."""
-    def __init__(self, play_pack, column, row):
+    def __init__(self, play_pack, row, column):
         self._visible = False
-        self.__column = column
         self.__row = row
-        self.block = tk.Button(play_pack._okno, text = ' ', bg=TILE_COLOR[0], height=1, width=2)
-        self.block.bind('<Button-1>', lambda none: self.check_tile(self.__column, self.__row, play_pack))
-        self.block.bind('<Button-3>', lambda none: self.set_flag(play_pack))
+        self.__column = column
+        self._block = tk.Button(play_pack._okno, text = ' ', bg=TILE_COLOR[0], height=1, width=2)
+        self._block.bind('<Button-1>', lambda none: self.check_tile(self.__row, self.__column, play_pack))
+        self._block.bind('<Button-3>', lambda none: self.set_flag(play_pack))
         self._mina = False
         self._flaga = False
         self._wartosc = 0
@@ -25,19 +25,21 @@ class Tile():
         """
         if not self._mina:
             if self._wartosc:
-                self.block.configure(text=str(self._wartosc))  
-                self.block.configure(bg=TILE_COLOR[3])
+                self._block.configure(text=str(self._wartosc))  
+                self._block.configure(bg=TILE_COLOR[3])
             else:
-                self.block.configure(text='')
-                self.block.configure(bg=TILE_COLOR[2])
+                self._block.configure(text='')
+                self._block.configure(bg=TILE_COLOR[2])
         else:
             if mode:
-                self.block.configure(text='F')
-                self.block.configure(bg=TILE_COLOR[4], fg='blue')
+                self._block.configure(text='F')
+                self._block.configure(bg=TILE_COLOR[4], fg='blue')
             else:
-                self.block.configure(text='X')
-                self.block.configure(bg=TILE_COLOR[4], fg='red')
+                self._block.configure(text='X')
+                self._block.configure(bg=TILE_COLOR[4], fg='red')
         self._visible = True
+
+
 
     def set_flag(self, play_pack):
         """Ustawienie flagi - aktywowane poprzez kliknięcie.
@@ -49,16 +51,16 @@ class Tile():
             self._flaga = True
             self._visible = True
             play_pack._points_left.set(str(int(play_pack._points_left.get()) - 1))
-            self.block.configure(text = 'F')
-            self.block.configure(bg = TILE_COLOR[3], fg = 'blue')
+            self._block.configure(text = 'F')
+            self._block.configure(bg = TILE_COLOR[4], fg = 'blue')
             if self._mina:
                 play_pack._points_left_real -= 1
         elif self._visible and self._flaga:
             self._flaga = False
             self._visible = False
             play_pack._points_left.set(str(int(play_pack._points_left.get())+1))
-            self.block.configure(text='')
-            self.block.configure(bg=TILE_COLOR[0], fg='black')
+            self._block.configure(text='')
+            self._block.configure(bg=TILE_COLOR[0], fg='black')
             if self._mina:
                 play_pack._points_left_real += 1
         if not play_pack._points_left_real or not play_pack._points_left_not:
@@ -66,64 +68,65 @@ class Tile():
                 play_pack._text.set('Udało się!') #STOP
                 if not play_pack._stop:
                     play_pack._stop = True
-                    for row in play_pack._play_zone:
-                        for column_element in row:
-                            column_element.set_visible(True)
+                    for column_in_row in play_pack._play_zone:
+                        for element_in_column in column_in_row:
+                            element_in_column.set_visible(True)
 
-    def check_tile(self, a, b, play_pack):
+    def check_tile(self, row, column, play_pack):
         """Sprawdzenie pola - aktywowane poprzez kliknięcie.
 
         Jeśli (not self._mina), sprawdza sąsiednie pola.
         Zmienia wartość licznika pozostałych pól bez min.
         """
-        if a >= 0 and b >= 0 and a < len(play_pack._play_zone) and b < len(play_pack._play_zone[0]):
-            if not play_pack._play_zone[a][b]._visible:
-                play_pack._play_zone[a][b].set_visible()
-                if play_pack._play_zone[a][b]._wartosc or play_pack._play_zone[a][b]._mina: # sprawdzenie czy mina
-                    if play_pack._play_zone[a][b]._mina:
+        if row >= 0 and column >= 0 and row < len(play_pack._play_zone) and column < len(play_pack._play_zone[0]):
+            if not play_pack._play_zone[row][column]._visible:
+                play_pack._play_zone[row][column].set_visible()
+                if play_pack._play_zone[row][column]._wartosc or play_pack._play_zone[row][column]._mina: # sprawdzenie czy mina
+                    if play_pack._play_zone[row][column]._mina:
                         play_pack._text.set('Przegrana!') #STOP
-                        for row in play_pack._play_zone:
-                            for column_element in row:
-                                column_element.set_visible()
+                        play_pack._stop = True
+                        for column_in_row in play_pack._play_zone:
+                            for element_in_column in column_in_row:
+                                element_in_column.set_visible()
                     else:
                         play_pack._points_left_not -= 1
                 else: # sprawdzenie pól sąsiednich
                     play_pack._points_left_not -= 1
-                    self.check_tile(a-1, b-1, play_pack)
-                    self.check_tile(a-1, b  , play_pack)
-                    self.check_tile(a-1, b+1, play_pack)
-                    self.check_tile(a  , b-1, play_pack)
-                    self.check_tile(a  , b+1, play_pack)
-                    self.check_tile(a+1, b-1, play_pack)
-                    self.check_tile(a+1, b  , play_pack)
-                    self.check_tile(a+1, b+1, play_pack)
+                    self.check_tile(row-1, column-1, play_pack)
+                    self.check_tile(row-1, column  , play_pack)
+                    self.check_tile(row-1, column+1, play_pack)
+                    self.check_tile(row  , column-1, play_pack)
+                    self.check_tile(row  , column+1, play_pack)
+                    self.check_tile(row+1, column-1, play_pack)
+                    self.check_tile(row+1, column  , play_pack)
+                    self.check_tile(row+1, column+1, play_pack)
         if ((not play_pack._points_left_real) or (not play_pack._points_left_not)):
             if (int(play_pack._points_left.get()) == play_pack._points_left_real):
                 play_pack._text.set('Udało się!') #STOP
                 if not play_pack._stop:
                     play_pack._stop = True
-                    for row in play_pack._play_zone:
-                        for column_element in row:
-                            column_element.set_visible(True)
+                    for column_in_row in play_pack._play_zone:
+                        for element_in_column in column_in_row:
+                            element_in_column.set_visible(True)
 
     def cheat2(self):
         """Zmienia kolor pola w trybie podglądania"""
         if not self._visible:
             if self._mina:
-                self.block.configure(bg=TILE_COLOR[1])
+                self._block.configure(bg=TILE_COLOR[1])
 
 class PlayZone():
     """Przechowuje dane planszy."""
-    def __init__(self, okno, column, points_left, text):
+    def __init__(self, okno, column_start, points_left, text):
         self._okno = okno
         self.__plansza_columns = 0
         self.__plansza_rows = 0
-        self.__plansza_mina = 0
+        self.__plansza_mines = 0
         self._points_left = points_left #wyświetla pozostałe miny do oznaczenia
         self._points_left_real = 0      #pozostałe miny do oznaczenia, dla flagi, ukryte
         self._points_left_not = 0       #pozostałe miny do oznaczenia, dla wykopane, ukryte
         self._text = text
-        self.__column_start = column # - miejsce rozpoczęcia rysowania planszy
+        self.__column_start = column_start # - miejsce rozpoczęcia rysowania planszy
         self._play_zone = None       # - przechowuje pola planszy
         self._stop = False           # - zapobiega przycinaniu dla Tile.check_tile(...)
 
@@ -131,7 +134,7 @@ class PlayZone():
         """Usuwa dane planszy."""
         for i in self._play_zone:
             for j in i:
-                j.block.destroy()
+                j._block.destroy()
             i.clear()
         self._play_zone.clear()
         self.__plansza_rows = 0
@@ -153,7 +156,7 @@ class PlayZone():
             return 0
         i=0
         seed(time_ns())
-        while i < self.__plansza_mina:
+        while i < self.__plansza_mines:
             x=randint(0, self.__plansza_rows -1) #wybiera losowo row
             y=randint(0, self.__plansza_columns -1) #wybiera losowo column
             if not self._play_zone[x][y]._mina:
@@ -173,23 +176,26 @@ class PlayZone():
                 otocznie += if_mine(i+1, j+1)
                 self._play_zone[i][j]._wartosc = otocznie
 
-    def set_play_zone(self, n, m, miny):
+    def set_play_zone(self, rows, columns, mines):
         """Ustawia nową planszę."""
         if self._play_zone:
             self.remove_play_zone()
-        self.__plansza_columns = n
-        self.__plansza_rows = m
-        self.__plansza_mina = miny
-        self._points_left_real = miny
-        self._points_left_not = n * m - miny
+        self.__plansza_columns = rows
+        self.__plansza_rows = columns
+        self.__plansza_mines = mines
+        self._points_left.set(mines)
+        self._points_left_real = mines
+        self._points_left_not = rows * columns - mines
         self._play_zone=[]
+
         for _row in range(0, self.__plansza_rows):
             wiersz=[]
             for _column in range(0, self.__plansza_columns):
                 pole=Tile(self, _row, _column)
-                pole.block.grid(row=_row, column=_column + self.__column_start)
+                pole._block.grid(row=_row, column=_column + self.__column_start)
                 wiersz.append(pole)
             self._play_zone.append(wiersz)
+
         self.set_mines()
         self._stop = False
 
@@ -205,25 +211,18 @@ class MyGui():
         self.__okno.title('Saper')
         self.__plansza_columns = 0
         self.__plansza_rows = 0
-        self.__plansza_mina = 0
+        self.__plansza_mines = 0
         self.__play=None
 
         self.__text = tk.StringVar()
         self.__text.set("Wpisz wartości")
         self.__points_left = tk.StringVar()
 
-    def start_play(self):
-        """Tworzy obiekt planszy dla prawidłowych danych"""
-        COLUMN_START = 5 #miejsce rozpoczęcia rysowania planszy
-        if not self.__play:
-            self.__play=PlayZone(self.__okno, COLUMN_START, self.__points_left, self.__text)
-        self.__play.set_play_zone(self.__plansza_columns, self.__plansza_rows, self.__plansza_mina)
-        self.__points_left.set(self.__plansza_mina)
-
     def start_try(self, sx, sy, smina):
         """Sprawdza poprawność wprowadzonych danych"""
         MAX_ROWS = 15
         MAX_COLUMNS = 20
+        COLUMN_START = 5 #miejsce rozpoczęcia rysowania planszy
         try:
             sn=int(sx)
             sm=int(sy)
@@ -241,15 +240,18 @@ class MyGui():
             self.__text.set('Wpisz liczby!')
         except Exception as e:
             self.__text.set('Błąd')
-            print('Błąd\n')
+            print('Błąd')
             print(e.args)
             raise e
         else:
             self.__plansza_columns = sm
             self.__plansza_rows = sn
-            self.__plansza_mina = smi
+            self.__plansza_mines = smi
             #plansza
-            self.start_play()
+            if not self.__play:
+                self.__play=PlayZone(self.__okno, COLUMN_START, self.__points_left, self.__text)
+            self.__play.set_play_zone(self.__plansza_columns, self.__plansza_rows, self.__plansza_mines)
+            self.__points_left.set(self.__plansza_mines)
             self.__text.set("Start!")
 
     def cheat(self):
