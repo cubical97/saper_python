@@ -7,12 +7,10 @@ TILE_COLOR=('AntiqueWhite1', 'AntiqueWhite2', 'gray85', 'gray80', 'gray65')
 class Tile():
     """Przechowuje dane pola."""
     def __init__(self, play_pack, column, row):
-        self.__blockcolor = tk.StringVar()
-        self.__blockcolor.set(TILE_COLOR[0])
         self._visible = False
         self.__column = column
         self.__row = row
-        self.block = tk.Button(play_pack._okno, text = ' ', bg=self.__blockcolor.get(), height=1, width=2)
+        self.block = tk.Button(play_pack._okno, text = ' ', bg=TILE_COLOR[0], height=1, width=2)
         self.block.bind('<Button-1>', lambda none: self.check_tile(self.__column, self.__row, play_pack))
         self.block.bind('<Button-3>', lambda none: self.set_flag(play_pack))
         self._mina = False
