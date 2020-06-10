@@ -5,7 +5,7 @@ from time import time_ns
 MAX_ROWS = 15
 MAX_COLUMNS = 20
 
-class Tile():
+class Tile:
     """Przechowuje dane pola."""
     TILE_COLOR=('AntiqueWhite1', 'bisque2', 'gray85', 'gray80', 'gray65')
 
@@ -122,7 +122,7 @@ class Tile():
             if self._mina:
                 self._block.configure(bg=Tile.TILE_COLOR[1])
 
-class PlayZone():
+class PlayZone:
     """Przechowuje dane planszy."""
     def __init__(self, okno, column_start, points_left, text):
         self._okno = okno
@@ -205,7 +205,7 @@ class PlayZone():
         self.set_mines()
         self._stop = False
 
-class MyGui():
+class MyGui:
     """Menu aplikacji.
     
     Przechowuje okno wygenerowane w Tkinter.
