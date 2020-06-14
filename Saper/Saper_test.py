@@ -1,10 +1,11 @@
-import unittest
 import tkinter as tk
-import Saper
+import unittest
+
+import saper
 
 class MyGuiTest(unittest.TestCase):
     def setUp(self):
-        self.gui = Saper.MyGui(tk.Tk())
+        self.gui = saper.MyGui(tk.Tk())
     
     def count_mines(self):
         count = 0
@@ -17,22 +18,22 @@ class MyGuiTest(unittest.TestCase):
     def test_mygui_input_spam(self):
         self.setUp()
         self.gui.start_try('spam','spam','spam')
-        self.assertEqual(self.gui._MyGui__play, None)
+        self.assertIsNone(self.gui._MyGui__play)
 
     def test_mygui_input_good_numbers(self):
         self.setUp()
         self.gui.start_try(8, 8, 12)
-        self.assertEqual(type(self.gui._MyGui__play), Saper.PlayZone)
+        self.assertEqual(type(self.gui._MyGui__play), saper.PlayZone)
 
     def test_mygui_input_wrong_numbers(self):
         self.setUp()
         self.gui.start_try(100, -800, 1)
-        self.assertEqual(self.gui._MyGui__play, None)
+        self.assertIsNone(self.gui._MyGui__play)
 
     def test_mygui_input_full_in_mines(self):
         self.setUp()
         self.gui.start_try(8, 8, 64)
-        self.assertEqual(self.gui._MyGui__play, None)
+        self.assertIsNone(self.gui._MyGui__play)
 
     def test_playzone_start_square(self):
         self.setUp()
@@ -72,8 +73,8 @@ class MyGuiTest(unittest.TestCase):
         self.assertEqual(self.gui._MyGui__text.get(), 'Udało się!')
         for column_in_row in self.gui._MyGui__play._play_zone:
             for element_in_column in column_in_row:
-                self.assertEqual(element_in_column._visible, True)
-        self.assertEqual(self.gui._MyGui__play._stop, True)
+                self.assertTrue(element_in_column._visible)
+        self.assertTrue(self.gui._MyGui__play._stop)
 
     def test_playzone_play_check(self):
         self.setUp()
@@ -89,8 +90,8 @@ class MyGuiTest(unittest.TestCase):
         self.assertEqual(self.gui._MyGui__text.get(), 'Udało się!')
         for column_in_row in self.gui._MyGui__play._play_zone:
             for element_in_column in column_in_row:
-                self.assertEqual(element_in_column._visible, True)
-        self.assertEqual(self.gui._MyGui__play._stop, True)
+                self.assertTrue(element_in_column._visible)
+        self.assertTrue(self.gui._MyGui__play._stop)
 
     def test_playzone_play_fail(self):
         self.setUp()
@@ -108,8 +109,8 @@ class MyGuiTest(unittest.TestCase):
         self.assertEqual(self.gui._MyGui__text.get(), 'Przegrana!')
         for column_in_row in self.gui._MyGui__play._play_zone:
             for element_in_column in column_in_row:
-                self.assertEqual(element_in_column._visible, True)
-        self.assertEqual(self.gui._MyGui__play._stop, True)
+                self.assertTrue(element_in_column._visible)
+        self.assertTrue(self.gui._MyGui__play._stop)
 
 if __name__ == '__main__':
     unittest.main()

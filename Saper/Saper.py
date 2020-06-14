@@ -1,6 +1,6 @@
+import random
+import time
 import tkinter as tk
-from random import seed, randint
-from time import time_ns
 
 MAX_ROWS = 15
 MAX_COLUMNS = 20
@@ -162,10 +162,10 @@ class PlayZone:
                     return 1
             return 0
         ilosc_min = 0
-        seed(time_ns())
+        random.seed(time.time_ns())
         while ilosc_min < self.__plansza_mines:
-            x = randint(0, self.__plansza_rows - 1) #wybiera losowo row
-            y = randint(0, self.__plansza_columns - 1) #wybiera losowo column
+            x = random.randint(0, self.__plansza_rows - 1) #wybiera losowo row
+            y = random.randint(0, self.__plansza_columns - 1) #wybiera losowo column
             if not self._play_zone[x][y]._mina:
                 self._play_zone[x][y]._mina = True
                 ilosc_min += 1
